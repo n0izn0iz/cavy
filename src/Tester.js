@@ -1,11 +1,11 @@
-import React, { Component, Children } from 'react';
-import PropTypes from 'prop-types';
-import { AsyncStorage } from 'react-native';
+import React, {Component, Children} from "react";
+import PropTypes from "prop-types";
+import {AsyncStorage} from "react-native";
 
-import TestHookStore from './TestHookStore';
-import TestScope from './TestScope';
-import TestRunner from './TestRunner';
-import reporter from './reporter';
+import TestHookStore from "./TestHookStore";
+import TestScope from "./TestScope";
+import TestRunner from "./TestRunner";
+import reporter from "./reporter";
 
 // Public: Wrap your entire app in Tester to run tests against that app,
 // interacting with registered components in your test cases via the Cavy
@@ -59,7 +59,9 @@ export default class Tester extends Component {
     this.testHookStore = props.store;
     // Default to sending a test report to cavy-cli if no custom reporter is
     // supplied.
-    this.reporter = props.reporter || reporter;
+    this.reporter =
+      props.reporter ||
+      reporter(`http://${props.reportServerHost}:${props.reportServerPort}`);
   }
 
   componentDidMount() {
@@ -68,7 +70,7 @@ export default class Tester extends Component {
 
   // Run all test suites.
   async runTests() {
-    const { specs, waitTime, startDelay, sendReport } = this.props;
+    const {specs, waitTime, startDelay, sendReport} = this.props;
     const testSuites = [];
     // Iterate over each suite of specs and create a new TestScope for each.
     for (var i = 0; i < specs.length; i++) {
@@ -78,7 +80,13 @@ export default class Tester extends Component {
     }
 
     // Instantiate the test runner, pass in the array of suites and run the tests.
-    const runner = new TestRunner(this, testSuites, startDelay, this.reporter, sendReport);
+    const runner = new TestRunner(
+      this,
+      testSuites,
+      startDelay,
+      this.reporter,
+      sendReport
+    );
     runner.run();
   }
 
@@ -90,8 +98,8 @@ export default class Tester extends Component {
   async clearAsync() {
     if (this.props.clearAsyncStorage) {
       try {
-        await AsyncStorage.getAllKeys().then(AsyncStorage.multiRemove)
-      } catch(e) {
+        await AsyncStorage.getAllKeys().then(AsyncStorage.multiRemove);
+      } catch (e) {
         console.warn("[Cavy] failed to clear AsyncStorage:", e);
       }
     }
@@ -114,11 +122,15 @@ Tester.propTypes = {
   clearAsyncStorage: PropTypes.bool,
   reporter: PropTypes.func,
   // Deprecated (see note in TestRunner component).
-  sendReport: PropTypes.bool
+  sendReport: PropTypes.bool,
+  reportServerHost: PropTypes.string,
+  reportServerPort: PropTypes.number
 };
 
 Tester.defaultProps = {
   waitTime: 2000,
   startDelay: 0,
-  clearAsyncStorage: false
+  clearAsyncStorage: false,
+  reportServerHost: "127.0.0.1",
+  reportServerPort: 8082
 };
