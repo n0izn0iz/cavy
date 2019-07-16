@@ -1,6 +1,10 @@
 version: 2
 jobs:
   install_dependencies:
+    # Specify the Xcode version to use
+    macos:
+      xcode: "9.0"
+      
     steps:
       - checkout
 
@@ -38,6 +42,10 @@ jobs:
           commans: npm link ../sample-app/CavyDirectory/node_modules/react
 
   run_unit_tests:
+    # Specify the Xcode version to use
+    macos:
+      xcode: "9.0"
+
     steps:
       - checkout
 
