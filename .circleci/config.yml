@@ -1,11 +1,6 @@
 version: 2
 jobs:
-  ios:
-
-    # Specify the Xcode version to use
-    macos:
-      xcode: "9.0"
-
+  install_dependencies:
     steps:
       - checkout
 
@@ -21,10 +16,6 @@ jobs:
           command: |
             npm i
             npm i react@16.8.3
-
-      - run:
-          name: Run unit tests
-          command: npm test
 
       - run:
           name: Link local copy of cavy
@@ -44,8 +35,23 @@ jobs:
 
       - run:
           name: Link React versions together
-          command:
-            npm link ../sample-app/CavyDirectory/node_modules/react
+          commans: npm link ../sample-app/CavyDirectory/node_modules/react
+
+  run_unit_tests:
+    steps:
+      - checkout
+
+      - run:
+          name: Run unit tests
+          command: npm test
+
+  run_ios_tests:
+    # Specify the Xcode version to use
+    macos:
+      xcode: "9.0"
+
+    steps:
+      - checkout
 
       - run:
           name: Build app and run tests
@@ -60,6 +66,16 @@ jobs:
 
 workflows:
   version: 2
+  unit:
+    jobs:
+      - install_dependencies
+      - run_unit_tests:
+          requires:
+            - install_dependencies
+
   ios:
     jobs:
-      - ios
+      - install_dependencies
+      - run_ios_tests:
+          requires:
+            - install_dependencies
