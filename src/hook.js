@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
-import TestHookStore from './TestHookStore';
-import { TesterContext } from './Tester';
-import generateTestHook from './generateTestHook';
+import TestHookStore from "./TestHookStore";
+import {TesterContext} from "./Tester";
+import generateTestHook from "./generateTestHook";
 
 // Public: Higher-order React component to factilitate adding hooks to the
 // global test hook store. Once you've hooked your main component (see example
@@ -42,20 +42,13 @@ import generateTestHook from './generateTestHook';
 //   export default TestableMyComponent;
 //
 // Returns the new component with the ref generating function generateTestHook as a prop.
-export default function hook(WrappedComponent) {
-  const wrapperComponent = class extends Component {
-    render() {
-      const testHookStore = this.context;
-      return (
-        <WrappedComponent
-          generateTestHook={generateTestHook(testHookStore)}
-          {...this.props}
-        />
-      )
-    }
-  };
-
-  wrapperComponent.contextType = TesterContext;
-
-  return wrapperComponent;
-}
+export default WrappedComponent => props => (
+  <TesterContext.Consumer>
+    {testHookStore => (
+      <WrappedComponent
+        generateTestHook={generateTestHook(testHookStore)}
+        {...props}
+      />
+    )}
+  </TesterContext.Consumer>
+);
