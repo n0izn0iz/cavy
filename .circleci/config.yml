@@ -4,7 +4,7 @@ jobs:
     # Specify the Xcode version to use
     macos:
       xcode: "9.0"
-      
+
     steps:
       - checkout
 
@@ -39,7 +39,7 @@ jobs:
 
       - run:
           name: Link React versions together
-          commans: npm link ../sample-app/CavyDirectory/node_modules/react
+          command: npm link ../sample-app/CavyDirectory/node_modules/react
 
   run_unit_tests:
     # Specify the Xcode version to use
