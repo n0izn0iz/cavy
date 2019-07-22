@@ -40,7 +40,7 @@ async function send(report, url) {
   };
 
   try {
-    await fetch(url, options);
+    await fetch(`${url}/report`, options);
     console.log("Cavy test report successfully sent to cavy-cli");
   } catch (e) {
     console.group("Error sending test results");
